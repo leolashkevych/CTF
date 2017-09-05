@@ -1,0 +1,9 @@
+Go to console and serch for keys of your window
+Object.keys( window );
+
+The ouput is
+["top", "window", "location", "external", "chrome", "document", "NREUM", "__nr_require", "$", "jQuery", "io", "html5", "Modernizr", "yepnope", "_gs", "timeSince", "timeString", "PopupCenter", "createCookie", "FavCounter", "loggedIn", "thecode", "_idl", "timer_start", "hljs", "socket", "favcounter", "counter_chat", "counter_notifications", "searchsuggest", "set", "a", "b", "c", "d", "p", "__commandLineAPI"]
+
+Find variables a, b, c and d. Output them.
+
+alert(d) outputs 'hats'

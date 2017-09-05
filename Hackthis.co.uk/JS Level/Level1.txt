@@ -1,0 +1,5 @@
+There is a script in the source code which compares the value to a variable called 'correct'
+<script type='text/javascript'> $(function(){ $('.level-form').submit(function(e){ e.preventDefault(); if(document.getElementById('pass').value == correct) { document.location = '?pass=' + correct; } else { alert('Incorrect password') } })})</script>
+
+Open a console and enter console.log(correct)
+// returns 'selurj' 
