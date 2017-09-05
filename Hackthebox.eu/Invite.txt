@@ -10,10 +10,10 @@ Decode the data, which is going to be your invite code
     "0": 200,
     "success": 1,
     "data": {
-        "code": "VUhXQlYtVkNaR1ktUlpHTUctSVBMT1ItRUxDSFo=",
+        "code": "VUhXQlYtVkNaR1ktUlpHTUctSVBMT1ItRUxD****",
         "format": "encoded"
     }
 }
 
 
-UHWBV-VCZGY-RZGMG-IPLOR-ELCHZ
+UHWBV-VCZGY-RZGMG-IPLOR-****
