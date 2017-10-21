@@ -1,5 +1,7 @@
 Testing for sql injection
 
+First off, capture the POST request to the website and save it to sql-post.txt.
+
 ~# sqlmap -v -r sql-post.txt --level 5 --risk 3
 
 POST parameter 'username' is vulnerable. Do you want to keep testing the others (if any)? [y/N] N
