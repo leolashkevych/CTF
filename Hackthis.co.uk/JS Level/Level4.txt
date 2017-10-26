@@ -1,7 +1,0 @@
-Find the sorce code
-view-source:https://www.hackthis.co.uk/levels/javascript/4?output
-
-Search for the level form
-
-<div class='center'>The password is: smellthecheese</div>
-
