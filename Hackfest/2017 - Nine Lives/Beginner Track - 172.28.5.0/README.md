@@ -13,7 +13,7 @@ This challenge requires the completion of [SSH challenge](#ssh)
 >Address: Same machine as as the ping scan
 Note: use the ssh key from the first Linux challenge to log into the box.
 
-Running ```sudo -l``` indicates that Nyan can run the following program with no pw.
+Running ```sudo -l``` indicates that Nyan can run the following program with no pw. Modify the script so it displays the flag using ```os.system("cat /home/Nyan/flag.txt")```.
 ```
 Grumpy@BegginerBox:~$ sudo -u Nyan /usr/bin/python2.7 /home/Nyan/script.py
 HF-21ED0355867EE411144B4CA045DCA640
