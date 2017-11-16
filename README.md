@@ -43,6 +43,8 @@ __Prerequisites__: Requires some knowledge of bash, Kali tools, Metasploit and e
 
 https://hackfest.ca/en/ctf/
 
+[Challenges](https://github.com/HoLyVieR/Hackfest-MiniCTF-2017)
+
 [Hackfest
  Walkthroughs](https://github.com/leolashkevych/CTF/tree/master/Hackfest/2017%20-%20Nine%20Lives)
 > Level - Entry to Intermediate

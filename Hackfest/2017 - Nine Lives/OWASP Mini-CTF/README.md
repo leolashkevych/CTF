@@ -1,5 +1,7 @@
 # OWASP CTF - owasp.zhack.ca
 
+Challenges are [here](https://github.com/HoLyVieR/Hackfest-MiniCTF-2017).
+
 ## Privilege Escalation 1
 >Find a way to elevate your privileges to 'admin'
 Connection : ssh challenge@owasp.zhack.ca -p 1507
